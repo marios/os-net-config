@@ -137,19 +137,20 @@ class IfcfgNetConfig(os_net_config.NetConfig):
                 update_files[bridge_config_path(bridge_name)] = bridge_data
                 update_files[route_config_path(bridge_name)] = route_data
 
+        __down = processutils.execute('which', 'ifdown')[0].strip()
+        __up = processutils.execute('which', 'ifup')[0].strip()
+
         for interface in restart_interfaces:
-            processutils.execute('/sbin/ifdown', interface,
-                                 check_exit_code=False)
+            processutils.execute(__down, interface, check_exit_code=False)
 
         for bridge in restart_bridges:
-            processutils.execute('/sbin/ifdown', bridge,
-                                 check_exit_code=False)
+            processutils.execute(__down, bridge, check_exit_code=False)
 
         for location, data in update_files.iteritems():
             utils.write_config(location, data)
 
         for bridge in restart_bridges:
-            processutils.execute('/sbin/ifup', bridge)
+            processutils.execute(__up, bridge)
 
         for interface in restart_interfaces:
-            processutils.execute('/sbin/ifup', interface)
+            processutils.execute(__up, interface)
