@@ -89,7 +89,6 @@ class IfcfgNetConfig(os_net_config.NetConfig):
 
     def addInterface(self, interface):
         data = self._addCommon(interface)
-
         self.interfaces[interface.name] = data
         if interface.routes:
             self._addRoutes(interface.name, interface.routes)
