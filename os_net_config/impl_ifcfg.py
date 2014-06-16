@@ -137,19 +137,26 @@ class IfcfgNetConfig(os_net_config.NetConfig):
                 update_files[bridge_config_path(bridge_name)] = bridge_data
                 update_files[route_config_path(bridge_name)] = route_data
 
+        # TODO(marios): for some reason this fails tests:
+        # processutils.execute('which', 'ifdown')[0].strip()
+        # see https://github.com/dprince/os-net-config/pull/1
+        # TODO(marios): move this to NetConfig (same for ubuntu/deb)
+        __down = '/sbin/ifdown'
+        __up = '/sbin/ifup'
+
         for interface in restart_interfaces:
-            processutils.execute('/sbin/ifdown', interface,
+            processutils.execute(__down, interface,
                                  check_exit_code=False)
 
         for bridge in restart_bridges:
-            processutils.execute('/sbin/ifdown', bridge,
+            processutils.execute(__down, bridge,
                                  check_exit_code=False)
 
         for location, data in update_files.iteritems():
             utils.write_config(location, data)
 
         for bridge in restart_bridges:
-            processutils.execute('/sbin/ifup', bridge)
+            processutils.execute(__up, bridge)
 
         for interface in restart_interfaces:
-            processutils.execute('/sbin/ifup', interface)
+            processutils.execute(__up, interface)
