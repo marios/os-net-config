@@ -118,7 +118,11 @@ class ENINetConfig(os_net_config.NetConfig):
         return data
 
     def addInterface(self, interface):
-        data = self._addCommon(interface)
+        #TODO(marios): add support for multiple addresses
+        static_addr = ''
+        if interface.addresses:
+            static_addr = interface.addresses[0]
+        data = self._addCommon(interface, static_addr)
 
         self.interfaces[interface.name] = data
         if interface.routes:
